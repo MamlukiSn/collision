@@ -141,7 +141,7 @@ class LaravelTest extends TestCase
     {
         $app      = $this->createApplication();
         $provides = (new CollisionServiceProvider($app))->provides();
-        $this->assertEquals([ProviderContract::class], $provides);
+        $this->assertEquals([ProviderContract::class, ExceptionHandlerContract::class], $provides);
     }
 
     /**
