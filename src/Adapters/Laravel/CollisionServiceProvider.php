@@ -19,6 +19,7 @@ use NunoMaduro\Collision\Handler;
 use NunoMaduro\Collision\Provider;
 use NunoMaduro\Collision\SolutionsRepositories\NullSolutionsRepository;
 use NunoMaduro\Collision\Writer;
+use Illuminate\Contracts\Container\Container;
 
 /**
  * This is an Collision Laravel Adapter Service Provider implementation.
@@ -69,14 +70,9 @@ class CollisionServiceProvider extends ServiceProvider
                 return new Provider(null, $handler);
             });
 
-            $appExceptionHandler = $this->app->make(ExceptionHandlerContract::class);
-
-            $this->app->singleton(
-                ExceptionHandlerContract::class,
-                function ($app) use ($appExceptionHandler) {
-                    return new ExceptionHandler($app, $appExceptionHandler);
-                }
-            );
+            $this->app->extend(ExceptionHandlerContract::class, function (ExceptionHandlerContract $exceptionHandler, Container $container) {
+                return new ExceptionHandler($container, $exceptionHandler);
+            });
         }
     }
 
@@ -85,6 +81,6 @@ class CollisionServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [ProviderContract::class];
+        return [ProviderContract::class, ExceptionHandlerContract::class];
     }
 }
